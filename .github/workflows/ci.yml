@@ -1,0 +1,46 @@
+# The merge gate for stonedog-catalog.
+#
+# This repo is public and the package has zero runtime dependencies, so the
+# gate is self-contained: no sibling checkout, no secrets, no services. The
+# adapters' tests fake `fetch`, so nothing here reaches a third-party API — a
+# suite that called OMDB for real would fail on a rate limit rather than on a
+# defect, and would need a key in CI for no benefit.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A new push supersedes an in-flight run on the same branch. `main` is exempt:
+# its runs are the record of what landed, and cancelling one leaves a commit
+# with no verdict.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  gate:
+    name: Gate (typecheck, lint, unit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # `npm ci`, not `npm install` — it installs exactly the lockfile and fails
+      # if package.json has drifted from it, which is the difference between
+      # reproducing a build and approximating one.
+      - run: npm ci
+
+      - run: npm run gate
+
+      # The package ships a built dist/, and `files` names it. dist/ is
+      # gitignored, so an unbuilt tarball would ship a package whose every
+      # export points at a file that is not in it: installs fine, fails at the
+      # consumer's first import, on a version number that can never be reused.
+      # Building here makes that a merge failure rather than a release-day one.
+      - run: npm run build

@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2024",
+    // DOM is here for `fetch` and `Response` only. This package runs on a
+    // server; it touches no document and no window. Node's own fetch types
+    // would do, but they arrive via @types/node's undici shapes and differ
+    // between versions, and an adapter that compiles on one maintainer's Node
+    // and not another's is a worse trade than one extra lib entry.
+    "lib": ["ES2024", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "outDir": "./dist",
+    "strict": true,
+    // On, and it earns its keep here more than almost anywhere: every adapter
+    // indexes into JSON parsed from a third-party API. `items[0]` from an empty
+    // results array is the normal case for a barcode nobody has heard of, not a
+    // theoretical one.
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["jest", "node"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,67 @@
+{
+  "name": "@stonedogcode/catalog",
+  "version": "0.1.0",
+  "description": "Pluggable metadata lookup adapters for barcodes: movies (OMDB), books (OpenLibrary, Google Books), board games (BoardGameGeek), and UPC resolution (UPCitemdb), with a chain-hint mechanism that lets one adapter feed the next.",
+  "license": "Apache-2.0",
+  "author": "StoneDogCode L.L.C.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stonedog-code/stonedog-catalog.git"
+  },
+  "//publishConfig": "A SCOPED package defaults to access: restricted. Publishing one without this succeeds, prints nothing unusual, and then 404s for every consumer — which reads as a missing package rather than as a private one.",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "//dependencies": "ZERO runtime dependencies, and that is load-bearing rather than incidental. These adapters were extracted from a private monorepo package that imported a Prisma client and a proprietary logger; neither was ever reachable from this code. Every dependency added here is imposed on every consumer, and the whole point of the extraction is that this half never needed one. HTTP is the platform's global fetch, which is why Node 20 is the floor.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext ts",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "gate": "npm run type-check && npm run lint && npm run test"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.13.2",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.57.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.11",
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "barcode",
+    "upc",
+    "isbn",
+    "metadata",
+    "catalog",
+    "collection",
+    "omdb",
+    "openlibrary",
+    "boardgamegeek"
+  ]
+}
