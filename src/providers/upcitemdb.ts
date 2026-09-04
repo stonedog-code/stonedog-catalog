@@ -11,7 +11,10 @@ export const upcItemDbAdapter: LookupProviderAdapter = {
     if (ctx.secrets.apiKey) headers["user_key"] = ctx.secrets.apiKey;
 
     const url = `https://api.upcitemdb.com/prod/trial/lookup?upc=${encodeURIComponent(ctx.barcode)}`;
-    let raw: unknown = null;
+    // Deliberately not initialised: every path that reads `raw` below has
+    // passed through the assignment in the `try`, because the `catch` returns.
+    // An `= null` here is dead, and eslint's `no-useless-assignment` says so.
+    let raw: unknown;
     let foundTitle: string | undefined;
     let imdbHint: string | undefined;
     try {
